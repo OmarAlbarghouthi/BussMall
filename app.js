@@ -13,6 +13,10 @@ let busImages = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfas
 let maxAttempts = 25;
 let attempt = 1;
 let bus = [];
+let imgNames = [];
+let views = [];
+let votes = [];
+let ranImg = [];
 
 function BUSIMAGES(busName) {
     this.bName = busName.split('.')[0];
@@ -20,6 +24,7 @@ function BUSIMAGES(busName) {
     this.votes = 0;
     this.views = 0;
     bus.push(this);
+    imgNames.push(this.bName);
 }
 
 for (let x = 0; x < busImages.length; x++) {
@@ -39,22 +44,21 @@ let middleIndex;
 
 function renderImg() {
 
-    leftIndex = randomImage();
-    rightIndex = randomImage();
-    middleIndex = randomImage();
+    
+    while (leftIndex === middleIndex ||
+        middleIndex === rightIndex || leftIndex === rightIndex ||ranImg.includes(leftIndex) || ranImg.includes(middleIndex) || ranImg.includes(rightIndex)) {
 
-    while (leftIndex === rightIndex) {
-        leftIndex = randomImage();
+            leftIndex = randomImage();
+            rightIndex = randomImage();
+            middleIndex = randomImage();
+            
+     }
 
-    }
-    while (leftIndex === middleIndex) {
-        leftIndex = randomImage();
+     ranImg[0]=(leftIndex);
+     ranImg[1]=(rightIndex);
+     ranImg[2]=(middleIndex);
 
-    }
-    while (middleIndex === rightIndex) {
-        middleIndex = randomImage();
 
-    }
     leftImg.setAttribute('src', bus[leftIndex].bImg);
     rightImg.setAttribute('src', bus[rightIndex].bImg);
     middleImg.setAttribute('src', bus[middleIndex].bImg);
@@ -95,14 +99,61 @@ function clickHandler(event) {
         leftImg.removeEventListener('click', clickHandler);
         rightImg.removeEventListener('click', clickHandler);
         middleImg.removeEventListener('click', clickHandler);
+        
     }
 
 }
 
 function showingResult() {
+    
     for (let i = 0; i < bus.length; i++) {
         let liEl = document.createElement('li');
         result.appendChild(liEl);
         liEl.textContent = `${bus[i].bName} has ${bus[i].votes} votes and  ${bus[i].views} views.`;
+        votes.push(bus[i].votes);
+        views.push(bus[i].views);
     }
+    chartRender();
+
 }
+
+function chartRender() {
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: imgNames,
+            datasets: [{
+                label: '# of Votes',
+                data: votes,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)'
+                    
+                ],
+                borderWidth: 1
+            },{
+                label: '# of Views',
+                data: views,
+
+                backgroundColor: [
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [                   
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
