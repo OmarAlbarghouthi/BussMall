@@ -18,6 +18,26 @@ let views = [];
 let votes = [];
 let ranImg = [];
 
+
+function saveInLocalStorage(){
+let data = JSON.stringify(bus);
+localStorage.setItem('BUSMALL', data);
+
+}
+
+function readByLocalStorage() {
+let stringObj = localStorage.getItem('BUSMALL');
+let normalObj = JSON.parse(stringObj);
+
+if (normalObj) {
+
+    bus = normalObj;
+    renderImg();
+    
+}
+    
+}
+
 function BUSIMAGES(busName) {
     this.bName = busName.split('.')[0];
     this.bImg = `images/${busName}`;
@@ -93,6 +113,7 @@ function clickHandler(event) {
         renderImg();
         console.log(bus);
         attempt++;
+        saveInLocalStorage();
 
     } else {
 
@@ -127,22 +148,22 @@ function chartRender() {
                 label: '# of Votes',
                 data: votes,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)'
+                    'blue'
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)'
+                    'red'
                     
                 ],
-                borderWidth: 1
+                borderWidth: 2
             },{
                 label: '# of Views',
                 data: views,
 
                 backgroundColor: [
-                    'rgba(255, 159, 64, 0.2)'
+                    'red'
                 ],
                 borderColor: [                   
-                    'rgba(255, 159, 64, 1)'
+                    'blue'
                 ],
                 borderWidth: 1
             }]
@@ -157,3 +178,4 @@ function chartRender() {
     });
 }
 
+readByLocalStorage();
